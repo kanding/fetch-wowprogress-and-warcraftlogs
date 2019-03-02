@@ -1,3 +1,7 @@
+// DISCLAIMER:
+// Google Apps Script can be weird and all that matters is speed :-)
+
+//////* START OF HEADER *//////
 var sheet = SpreadsheetApp.getActiveSpreadsheet();
 var request = sheet.getRange("web_scraping!A1").getValue();
 var diff = sheet.getRange("web_scraping!A2").getValue();
@@ -5,26 +9,66 @@ var partition = sheet.getRange("web_scraping!A4").getValue();
 var healers = ["Restoration", "Holy", "Discipline", "Mistweaver"];
 var api_key = sheet.getRange("K1:M1").getValue();
 
-// change to speed up execution time
-// stops after finding 'bosses' amount of percentiles
-// instead of checking every key in the JSON from WCL
+// Corresponding rows for importHTML in data-sheet
+// not pretty but fast.
+var classes = {
+  "Death Knight": ['A', 'B', 'C', 'D', 'E'],
+  "Demon Hunter": ['G', 'H', 'I', 'J', 'K'],
+  "Druid": ['M', 'N', 'O', 'P', 'Q'],
+  "Hunter": ['S', 'T', 'U', 'V', 'W'],
+  "Mage": ['Y', 'Z', 'AA', 'AB', 'AC'],
+  "Monk": ['AE', 'AF', 'AG', 'AH', 'AI'],
+  "Paladin": ['AK', 'AL', 'AM', 'AN', 'AO'],
+  "Priest": ['AQ', 'AR', 'AS', 'AT', 'AU'],
+  "Rogue": ['AW', 'AX', 'AY', 'AZ', 'BA'],
+  "Shaman": ['BC', 'BD', 'BE', 'BF', 'BG'],
+  "Warlock": ['BI', 'BJ', 'BK', 'BL', 'BM'],
+  "Warrior": ['BO', 'BP', 'BQ', 'BR', 'BS'],
+}
+
+// should correspond to the range you want to insert data to
+var startrow = 6;
+var endrow = sheet.getRange("web_scraping!C4").getValue();
+
+// change to speed up execution time,
+// stops loop at 'bosses' amount of parses found.
 var bosses = sheet.getRange("LFG!R2").getValue();
 bosses = Number(bosses)
 
-function insertData_(c1, c2, c3, c4, c5) {
-  var names = sheet.getRange("web_scraping!" + c1 + "6:" + c1 + "74").getValues();
-  var guilds = sheet.getRange("web_scraping!" + c2 + "6:" + c2 + "74").getValues();
-  var realms = sheet.getRange("web_scraping!" + c3 + "6:" + c3 + "74").getValues();
-  var itemlvls = sheet.getRange("web_scraping!" + c4 + "6:" + c4 + "74").getValues();
-  var times = sheet.getRange("web_scraping!" + c5 + "6:" + c5 + "74").getValues();
-  sheet.getRange("Names").setValues(names);
-  sheet.getRange("Guilds").setValues(guilds);
-  sheet.getRange("Realms").setValues(realms);
-  sheet.getRange("Item_levels").setValues(itemlvls);
-  sheet.getRange("Times").setValues(times);
-  sheet.getRange("Specs").setValue("");
-  sheet.getRange("Logs").setValue("");
-  sheet.getRange("Updates").setValue("");
+//////* END OF HEADER *//////
+
+// Input: Array from Classes, No error checking.
+function getData_(a) {
+  var names = sheet.getRange("web_scraping!" + a[0] + startrow + ":" + a[0] + endrow).getValues();
+  var guilds = sheet.getRange("web_scraping!" + a[1] + startrow + ":" + a[1] + endrow).getValues();
+  var realms = sheet.getRange("web_scraping!" + a[2] + startrow + ":" + a[2] + endrow).getValues();
+  var itemlvls = sheet.getRange("web_scraping!" + a[3] + startrow + ":" + a[3] + endrow).getValues();
+  var times = sheet.getRange("web_scraping!" + a[4] + startrow + ":" + a[4] + endrow).getValues();
+  insertData_(names, guilds, realms, itemlvls, times)
+}
+
+// Helper function because we should not operate cross sheets in one function (speed)
+function insertData_(names, guilds, realms, itemlvls, times) {
+  sheet.getRange("C" + startrow + ":C" + endrow).setValues(names);
+  sheet.getRange("D" + startrow + ":D" + endrow).setValues(guilds);
+  sheet.getRange("E" + startrow + ":E" + endrow).setValues(realms);
+  sheet.getRange("G" + startrow + ":G" + endrow).setValues(itemlvls);
+  sheet.getRange("H" + startrow + ":H" + endrow).setValues(times);
+  sheet.getRange("J" + startrow + ":J" + endrow).setValue("");
+  sheet.getRange("L" + startrow + ":Y" + endrow).setValue("");
+  sheet.getRange("AA" + startrow + ":AA" + endrow).setValue("");
+}
+
+function clearData_() {
+  sheet.getRange("C" + startrow + ":C" + endrow).setValue("");
+  sheet.getRange("D" + startrow + ":D" + endrow).setValue("");
+  sheet.getRange("E" + startrow + ":E" + endrow).setValue("");
+  sheet.getRange("G" + startrow + ":G" + endrow).setValue("");
+  sheet.getRange("H" + startrow + ":H" + endrow).setValue("");
+  sheet.getRange("J" + startrow + ":J" + endrow).setValue("");
+  sheet.getRange("L" + startrow + ":Y" + endrow).setValue("");
+  sheet.getRange("AA" + startrow + ":AA" + endrow).setValue("");
+  sheet.getRange("web_scraping!C3").setValue("0");
 }
 
 function FillLFG() {
@@ -42,85 +86,37 @@ function FillLFG() {
   }
   
   switch(request) {
-    case 0:
-      // None
-      sheet.getRange("Names").setValue("");
-      sheet.getRange("Guilds").setValue("");
-      sheet.getRange("Realms").setValue("");
-      sheet.getRange("Item_levels").setValue("");
-      sheet.getRange("Times").setValue("");
-      sheet.getRange("Specs").setValue("");
-      sheet.getRange("Logs").setValue("");
-      sheet.getRange("Updates").setValue("");
-      sheet.getRange("web_scraping!C3").setValue("0");
-      return;
-    case 1:
-      // Death Knight
-      insertData_('A', 'B', 'C', 'D', 'E');
-      break;
-    case 2:
-      // Demon Hunter
-      insertData_('G', 'H', 'I', 'J', 'K');
-      break;
-    case 3:
-      // Druid
-      insertData_('M', 'N', 'O', 'P', 'Q');
-      break;
-    case 4:
-      // Hunter
-      insertData_('S', 'T', 'U', 'V', 'W');
-      break;
-    case 5:
-      // Mage
-      insertData_('Y', 'Z', 'AA', 'AB', 'AC');
-      break;
-    case 6:
-      // Monk
-      insertData_('AE', 'AF', 'AG', 'AH', 'AI');
-      break;
-    case 7:
-      // Paladin
-      insertData_('AK', 'AL', 'AM', 'AN', 'AO');
-      break;
-    case 8:
-      // Priest
-      insertData_('AQ', 'AR', 'AS', 'AT', 'AU');
-      break;
-    case 9:
-      // Rogue
-      insertData_('AW', 'AX', 'AY', 'AZ', 'BA');
-      break;
-    case 10:
-      // Shaman
-      insertData_('BC', 'BD', 'BE', 'BF', 'BG');
-      break;
-    case 11:
-      // Warlock
-      insertData_('BI', 'BJ', 'BK', 'BL', 'BM');
-      break;
-    case 12:
-      // Warrior
-      insertData_('BO', 'BP', 'BQ', 'BR', 'BS');
-      break;
-    case 13:
-      // Talent scout high ilvl
-      // have to change insertdata/endrow to work
-      break;
+    case 0: clearData_(); return;
+    case 1: getData_(classes["Death Knight"]); break;
+    case 2: getData_(classes["Demon Hunter"]); break;
+    case 3: getData_(classes["Druid"]); break;
+    case 4: getData_(classes["Hunter"]); break;
+    case 5: getData_(classes["Mage"]); break;
+    case 6: getData_(classes["Monk"]); break;
+    case 7: getData_(classes["Paladin"]); break;
+    case 8: getData_(classes["Priest"]); break;
+    case 9: getData_(classes["Rogue"]); break;
+    case 10: getData_(classes["Shaman"]); break;
+    case 11: getData_(classes["Warlock"]); break;
+    case 12: getData_(classes["Warrior"]); break;
+    //case 13: getData_(classes); break;
     default:
       sheet.getRange("web_scraping!C3").setValue("0");
       return;
   }
+  
   GetLogs_();
+  
   sheet.getRange("web_scraping!C3").setValue("0");
   lock.releaseLock();
 }
 
 function GetLogs_() {
-  var startrow = 6;
-  var endrow = 74;
+  //var startrow = 6;
+  //var endrow = 74;
   var names = sheet.getRange("C" + startrow + ":C" + endrow).getValues();
   var realms = sheet.getRange("E" + startrow + ":E" + endrow).getValues();
-  sheet.getRange("Z6:Z74").setValue("");
+  sheet.getRange("Z" + startrow + ":Z" + endrow).setValue("");
   sheet.getRange("Specs").setValue("");
   sheet.getRange("Logs").setValue("");
   sheet.getRange("Updates").setValue("");
@@ -131,15 +127,18 @@ function GetLogs_() {
   }
   
   for (var i = startrow; i <= endrow; i++) {
-    if (names[i-6] == "" || realms[i-6] == "") {
+    var name = names[i-startrow]
+    var realm = realms[i-startrow]
+    
+    if (name == "" || realm == "") {
       // empty name or realm err
       sheet.getRange("AA" + i).setValue("ERR");
       continue;
     }
     
     try {
-      var response = UrlFetchApp.fetch("https://www.warcraftlogs.com:443/v1/rankings/character/" + names[i-6] + "/" + realms[i-6] + "/EU?partition=" + partition + "&timeframe=historical&api_key=" + api_key);
-    } catch(e) { 
+      var response = UrlFetchApp.fetch("https://www.warcraftlogs.com:443/v1/rankings/character/" + name + "/" + realm + "/EU?partition=" + partition + "&timeframe=historical&api_key=" + api_key);
+    } catch(e) {
       var response = false
       // import error
       sheet.getRange("AA" + i).setValue("IMP");
@@ -151,7 +150,7 @@ function GetLogs_() {
       if (parsed != "" && !parsed.hidden) {
         var spec = parsed[0]["spec"];
         if (healers.indexOf(spec) != -1.0) {
-          response = UrlFetchApp.fetch("https://www.warcraftlogs.com:443/v1/rankings/character/" + names[i-6] + "/" + realms[i-6] + "/EU?partition="+ partition + "&metric=hps&timeframe=historical&api_key=" + api_key);
+          response = UrlFetchApp.fetch("https://www.warcraftlogs.com:443/v1/rankings/character/" + name + "/" + realm + "/EU?partition="+ partition + "&metric=hps&timeframe=historical&api_key=" + api_key);
           parsed = JSON.parse(response);
         }
         

@@ -12,4 +12,5 @@ Written in Google Apps Script `.gs` and works solely through Google Sheets as an
 
 ## Dev
 Should be possible to get everything through [Google Drive REST API](https://developers.google.com/drive/api/v2/reference/)
+
 More options on partitions (US)

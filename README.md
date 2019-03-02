@@ -2,7 +2,7 @@ Fetch players looking for a guild on https://www.wowprogress.com/ and their corr
 
 Written in Google Apps Script `.gs` and works solely through Google Sheets as an associated script.
 
-![Alt text](https://i.imgur.com/rPHBUJt.png "Drive")
+![Alt text](https://i.imgur.com/YDTSSl2.png "Drive")
 
 ## Install
 

@@ -10,7 +10,12 @@ Written in Google Apps Script `.gs` and works solely through Google Sheets as an
 2. Open up Tools > Script Editor
 3. Copy the contents of script.js into Code.gs
 
-## Dev
-Should be possible to get everything through [Google Drive REST API](https://developers.google.com/drive/api/v2/reference/)
+## Notes
 
-More options on partitions (US)
+This script relies on Google Sheet functions such as `IMPORTHTML` for web scraping, which can be unreliable. There is a hidden sheet which contains a lot of raw data that should only be edited with caution.
+
+### Dev
+
+In the future should be possible to get everything through [Google Drive REST API](https://developers.google.com/drive/api/v2/reference/)
+
+Should be possible to partition players looking for guild in other regions than EU (OC, US).

@@ -6,8 +6,8 @@ Written in Google Apps Script `.gs` and works solely through Google Sheets as an
 
 ## Install
 
-1. Import the sheet [by making a copy](https://docs.google.com/spreadsheets/d/1FGG75Tw1CYxyCqfryBDrhCST23xZ8lz8pR_df3BEF6Y/copy)
-2. Provide a valid WarcraftLogs Public API Key
+1. Import the sheet [by making a copy](https://docs.google.com/spreadsheets/d/1FGG75Tw1CYxyCqfryBDrhCST23xZ8lz8pR_df3BEF6Y/copy).
+2. Provide a valid WarcraftLogs Public API Key.
 3. Click the `<fetch>` button and provide the script with authorization to edit the sheet.
 4. If needed copy the contents of script.js into Code.gs in Tools > Script Editor.
 

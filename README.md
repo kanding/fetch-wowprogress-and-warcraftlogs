@@ -13,7 +13,7 @@ Written in Google Apps Script `.gs` and works solely through Google Sheets as an
 
 ## Notes
 
-This script relies on Google Sheet functions such as `IMPORTHTML` for web scraping, which can be unreliable. There is a hidden sheet which contains a lot of raw data that should only be edited with caution.
+This script relies on Google Sheet functions such as `IMPORTHTML` for web scraping, which tend to be unreliable. There is a hidden sheet which contains a lot of raw data that should only be edited with caution.
 
 A valid WarcraftLogs Public API Key is also required in order to query for log information. This can be found on your [profile page](https://www.warcraftlogs.com/profile).
 

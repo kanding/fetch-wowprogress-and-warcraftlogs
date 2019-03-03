@@ -24,6 +24,7 @@ var classes = {
   "Shaman": ['BC', 'BD', 'BE', 'BF', 'BG'],
   "Warlock": ['BI', 'BJ', 'BK', 'BL', 'BM'],
   "Warrior": ['BO', 'BP', 'BQ', 'BR', 'BS'],
+  "All": ['BU', 'BV', 'BW', 'BX', 'BY'],
 }
 
 // should correspond to the range you want to insert data to
@@ -37,13 +38,13 @@ bosses = Number(bosses)
 
 //////* END OF HEADER *//////
 
-// Input: Array from Classes, No error checking.
 function getData_(a) {
   var names = sheet.getRange("web_scraping!" + a[0] + startrow + ":" + a[0] + endrow).getValues();
   var guilds = sheet.getRange("web_scraping!" + a[1] + startrow + ":" + a[1] + endrow).getValues();
   var realms = sheet.getRange("web_scraping!" + a[2] + startrow + ":" + a[2] + endrow).getValues();
   var itemlvls = sheet.getRange("web_scraping!" + a[3] + startrow + ":" + a[3] + endrow).getValues();
   var times = sheet.getRange("web_scraping!" + a[4] + startrow + ":" + a[4] + endrow).getValues();
+  
   insertData_(names, guilds, realms, itemlvls, times)
 }
 
@@ -71,55 +72,9 @@ function clearData_() {
   sheet.getRange("web_scraping!C3").setValue("0");
 }
 
-function FillLFG() {
-  var lock = LockService.getScriptLock();
-  lock.waitLock(1000);
-  
-  if (api_key == "") {
-    lock.releaseLock();
-    return;
-  }
-  
-  var running = sheet.getRange("web_scraping!C3").getValue();
-  if (running == 0) {
-    sheet.getRange("web_scraping!C3").setValue("1");
-  }
-  
-  switch(request) {
-    case 0: clearData_(); return;
-    case 1: getData_(classes["Death Knight"]); break;
-    case 2: getData_(classes["Demon Hunter"]); break;
-    case 3: getData_(classes["Druid"]); break;
-    case 4: getData_(classes["Hunter"]); break;
-    case 5: getData_(classes["Mage"]); break;
-    case 6: getData_(classes["Monk"]); break;
-    case 7: getData_(classes["Paladin"]); break;
-    case 8: getData_(classes["Priest"]); break;
-    case 9: getData_(classes["Rogue"]); break;
-    case 10: getData_(classes["Shaman"]); break;
-    case 11: getData_(classes["Warlock"]); break;
-    case 12: getData_(classes["Warrior"]); break;
-    //case 13: getData_(classes); break;
-    default:
-      sheet.getRange("web_scraping!C3").setValue("0");
-      return;
-  }
-  
-  GetLogs_();
-  
-  sheet.getRange("web_scraping!C3").setValue("0");
-  lock.releaseLock();
-}
-
 function GetLogs_() {
-  //var startrow = 6;
-  //var endrow = 74;
   var names = sheet.getRange("C" + startrow + ":C" + endrow).getValues();
   var realms = sheet.getRange("E" + startrow + ":E" + endrow).getValues();
-  sheet.getRange("Z" + startrow + ":Z" + endrow).setValue("");
-  sheet.getRange("Specs").setValue("");
-  sheet.getRange("Logs").setValue("");
-  sheet.getRange("Updates").setValue("");
   
   for (var r in realms) {
     realms[r][0] = realms[r][0].split(' ').join('-');
@@ -154,10 +109,11 @@ function GetLogs_() {
           parsed = JSON.parse(response);
         }
         
-        var timestamp = sheet.getRange("web_scraping!C1").getValue();
+        // this eats up some time
+        var timestamp = sheet.getRange("A300").getValue();
         sheet.getRange("AA" + i).setValue(timestamp);
         sheet.getRange("J" + i).setValue(spec);
-        var datarange = [['-','-','-','-','-','-','-','-','-','-','-','-','-','-']];
+        var datarange = [['','','','','','','','','','','','','','']];
         
         // keep sequential order in datarange despite holes in JSON
         var j = 0;
@@ -167,6 +123,7 @@ function GetLogs_() {
             j++;
           }
         }
+        
         sheet.getRange("L" + i + ":Y" + i).setValues(datarange);
       } else if (parsed.hidden) {
         // hidden logs
@@ -177,4 +134,42 @@ function GetLogs_() {
       }
     }
   }
+}
+
+function FillLFG() {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(1000);
+  
+  if (api_key == "") {
+    lock.releaseLock();
+    return;
+  }
+  
+  var running = sheet.getRange("web_scraping!C3").getValue();
+  if (running == 0) {
+    sheet.getRange("web_scraping!C3").setValue("1");
+  }
+  
+  switch(request) {
+    case 0: clearData_(); return;
+    case 1: getData_(classes["Death Knight"]); break;
+    case 2: getData_(classes["Demon Hunter"]); break;
+    case 3: getData_(classes["Druid"]); break;
+    case 4: getData_(classes["Hunter"]); break;
+    case 5: getData_(classes["Mage"]); break;
+    case 6: getData_(classes["Monk"]); break;
+    case 7: getData_(classes["Paladin"]); break;
+    case 8: getData_(classes["Priest"]); break;
+    case 9: getData_(classes["Rogue"]); break;
+    case 10: getData_(classes["Shaman"]); break;
+    case 11: getData_(classes["Warlock"]); break;
+    case 12: getData_(classes["Warrior"]); break;
+    case 13: getData_(classes["All"]); break;
+    default: sheet.getRange("web_scraping!C3").setValue("0"); return;
+  }
+  
+  GetLogs_();
+  
+  sheet.getRange("web_scraping!C3").setValue("0");
+  lock.releaseLock();
 }

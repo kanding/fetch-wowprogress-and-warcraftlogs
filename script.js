@@ -149,11 +149,11 @@ function InsertLogs_(name, realm, response, row) {
     for (var key in parsed) {
       if (j < bosses && parsed[key]["encounterName"] && parsed[key]["difficulty"] == diff) {
         if (parsed[key]["spec"] == spec) {
-          datarange[0][j] = parsed[key]["percentile"];
+          datarange[0][j] = (parsed[key]["percentile"]).toFixed(1);
           previous = parsed[key]["encounterName"];
           j++;
         } else if (parsed[key]["encounterName"] == previous && parsed[key]["percentile"] > datarange[0][j-1]) {
-          datarange[0][j-1] = parsed[key]["percentile"];
+          datarange[0][j-1] = (parsed[key]["percentile"]).toFixed(1);
           dirty = true;
         }
       }

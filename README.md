@@ -19,6 +19,4 @@ A valid WarcraftLogs Public API Key is also required in order to query for log i
 
 ### Dev
 
-In the future should be possible to get everything through [Google Drive REST API](https://developers.google.com/drive/api/v2/reference/).
-
 Should be possible to partition players looking for guild in other regions than EU (OC, US).
